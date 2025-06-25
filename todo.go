@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"os"
+	"fmt"
 )
 
 type Task struct {
@@ -50,17 +51,68 @@ func nextID(tasks []Task) int {
 }
 
 func AddTask(title string) {
-	panic("unimplemented")
+	fmt.Println("Generated random number:")
 }
 
 func ListTasks() {
-	panic("unimplemented")
+	fmt.Println("Generated random number:")
 }
 
 func CompleteTask(id int) {
-	panic("unimplemented")
+	tasks, err := loadTasks()
+	if err != nil {
+		fmt.Printf("Error loading tasks: %v\n", err)
+		return
+	}
+
+	found := false
+	for i, task := range tasks {
+		if task.ID == id {
+			tasks[i].Done = true
+			found = true
+			break
+		}
+	}
+
+	if !found {
+		fmt.Printf("Task with ID %d not found\n", id)
+		return
+	}
+
+	if err := saveTasks(tasks); err != nil {
+		fmt.Printf("Error saving tasks: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Task %d marked as complete\n", id)
 }
 
 func DeleteTask(id int) {
-	panic("unimplemented")
+	tasks, err := loadTasks()
+	if err != nil {
+		fmt.Printf("Error loading tasks: %v\n", err)
+		return
+	}
+
+	found := false
+	newTasks := []Task{}
+	for _, task := range tasks {
+		if task.ID == id {
+			found = true
+		} else {
+			newTasks = append(newTasks, task)
+		}
+	}
+
+	if !found {
+		fmt.Printf("Task with ID %d not found\n", id)
+		return
+	}
+
+	if err := saveTasks(newTasks); err != nil {
+		fmt.Printf("Error saving tasks: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Task %d deleted\n", id)
 }
